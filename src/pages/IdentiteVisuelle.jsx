@@ -58,6 +58,12 @@ export default function IdentiteVisuelle() {
       await loadProjects();
     } catch (error) {
       console.error("Erreur lors du chargement:", error);
+      // Check if it's an authentication error
+      if (error.message?.includes('You cannot view other users without being logged in') || 
+          error.response?.status === 401) {
+        navigate(createPageUrl("Accueil"));
+        return;
+      }
     }
     setIsLoading(false);
   };

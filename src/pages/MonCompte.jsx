@@ -49,6 +49,12 @@ export default function MonCompte() {
         setProjects(userProjects);
       } catch (error) {
         console.error("Erreur lors du chargement des données:", error);
+        // Check if it's an authentication error
+        if (error.message?.includes('You cannot view other users without being logged in') || 
+            error.response?.status === 401) {
+          navigate(createPageUrl("Accueil"));
+          return;
+        }
       } finally {
         setIsLoading(false);
       }
