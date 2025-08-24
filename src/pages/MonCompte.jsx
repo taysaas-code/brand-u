@@ -42,6 +42,13 @@ export default function MonCompte() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        // Check if user is authenticated before making API calls
+        const isAuth = await User.isAuthenticated();
+        if (!isAuth) {
+          navigate(createPageUrl("Accueil"));
+          return;
+        }
+        
         const currentUser = await User.me();
         setUser(currentUser);
         // Assuming Project entity now represents "Identités Visuelles" or will be adapted
