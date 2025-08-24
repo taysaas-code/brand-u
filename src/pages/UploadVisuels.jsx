@@ -5,7 +5,7 @@ import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { UploadFile } from "@/api/integrations";
-import { BrandAsset, UserSession } from "@/api/entities";
+import { BrandAsset, UserSession, User } from "@/api/entities";
 import StepIndicator from "../components/StepIndicator";
 import FileUploadZone from "../components/FileUploadZone";
 
@@ -17,13 +17,25 @@ export default function UploadVisuels() {
   const [sessionId] = useState(() => `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
 
   useEffect(() => {
-    // Créer ou mettre à jour la session utilisateur
-    UserSession.create({
-      session_id: sessionId,
-      current_step: 0,
-      has_visual_assets: false,
-      has_textual_assets: false
-    });
+    const initializeSession = async () => {
+      try {
+        // Vérifier si l'utilisateur est authentifié
+        await User.me();
+        
+        // Créer ou mettre à jour la session utilisateur
+        await UserSession.create({
+          session_id: sessionId,
+          current_step: 0,
+          has_visual_assets: false,
+          has_textual_assets: false
+        });
+      } catch (error) {
+        console.log("User not authenticated, redirecting to home");
+        navigate(createPageUrl("Accueil"));
+      }
+    };
+    
+    initializeSession();
   }, [sessionId]);
 
   const handleFilesSelected = (selectedFiles) => {
