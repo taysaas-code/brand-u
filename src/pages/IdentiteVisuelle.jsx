@@ -53,21 +53,18 @@ export default function IdentiteVisuelle() {
 
   const loadUserAndProjects = async () => {
     try {
-      // Check if user is authenticated before making API calls
-      const isAuth = await User.isAuthenticated();
-      if (!isAuth) {
-        navigate(createPageUrl("Accueil"));
-        return;
-      }
-      
+      // Check authentication by trying to get user data directly
       const currentUser = await User.me();
       setUser(currentUser);
+      
+      // If we get here, user is authenticated, load projects
       await loadProjects();
     } catch (error) {
       console.error("Erreur lors du chargement:", error);
-      // Check if it's an authentication error
+      // If any error occurs (including 401), redirect to home
       if (error.message?.includes('You cannot view other users without being logged in') || 
-          error.response?.status === 401) {
+          error.response?.status === 401 ||
+          error.message?.includes('401')) {
         navigate(createPageUrl("Accueil"));
         return;
       }
