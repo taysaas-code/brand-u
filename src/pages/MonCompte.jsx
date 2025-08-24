@@ -50,13 +50,15 @@ export default function MonCompte() {
         const userProjects = await Project.filter({ status: 'active' }, '-created_date');
         setProjects(userProjects);
       } catch (error) {
-        console.error("Erreur lors du chargement des données:", error);
         // If any error occurs (including 401), redirect to home
         if (error.message?.includes('You cannot view other users without being logged in') || 
             error.response?.status === 401 ||
             error.message?.includes('401')) {
           navigate(createPageUrl("Accueil"));
           return;
+        } else {
+          // Only log unexpected errors, not authentication errors
+          console.error("Erreur lors du chargement des données:", error);
         }
       } finally {
         setIsLoading(false);
