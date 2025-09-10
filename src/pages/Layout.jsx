@@ -123,18 +123,7 @@ export default function Layout({ children, currentPageName }) {
           </nav>
           
           <div className="mt-8 border-t border-gray-100 pt-4">
-            <div 
-              onClick={() => {
-                if (!user) {
-                  // Si pas d'utilisateur, rediriger vers l'accueil pour se connecter
-                  window.location.href = createPageUrl("Accueil");
-                } else {
-                  // Si utilisateur connecté, aller vers Mon Compte
-                  window.location.href = createPageUrl("MonCompte");
-                }
-              }}
-              className="block cursor-pointer"
-            >
+            <Link to={createPageUrl("MonCompte")} className="block">
               <div className={`flex items-center gap-3 px-4 py-2 rounded-xl cursor-pointer ${currentPageName === 'MonCompte' ? 'bg-gray-100' : 'hover:bg-gray-100'}`}>
                 {user?.picture ? (
                   <img src={user.picture} alt={user.name} className="w-8 h-8 rounded-full" />
@@ -146,7 +135,7 @@ export default function Layout({ children, currentPageName }) {
                   <p className="text-xs text-gray-500">{user?.email || 'Accéder à mon profil'}</p>
                 </div>
               </div>
-            </div>
+            </Link>
           </div>
         </aside>
 

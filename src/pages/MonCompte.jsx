@@ -42,14 +42,8 @@ export default function MonCompte() {
   const toast = useToast();
 
   useEffect(() => {
-    // Ne pas rediriger immédiatement, laisser le temps au contexte de se charger
-    if (!authLoading) {
-      if (!isAuthenticated) {
-        console.log('User not authenticated, redirecting to login');
-        navigate(createPageUrl("Accueil"));
-        return;
-      }
-      // Si authentifié, charger les données
+    // Si authentifié, charger les données
+    if (isAuthenticated && !authLoading) {
       loadProjects();
     }
   }, [isAuthenticated, authLoading]);

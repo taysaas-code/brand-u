@@ -102,7 +102,7 @@ function PagesContent() {
                 
                 <Route path="/ProjetDetail" element={<ProjetDetail />} />
                 
-                <Route path="/MonCompte" element={<MonCompte />} />
+                <Route path="/MonCompte" element={<ProtectedRoute><MonCompte /></ProtectedRoute>} />
                 
             </Routes>
         </Layout>
