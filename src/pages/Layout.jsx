@@ -123,7 +123,7 @@ export default function Layout({ children, currentPageName }) {
           <div className="mt-8 border-t border-gray-100 pt-4">
             <Link to={createPageUrl('MonCompte')} className="block">
               <div className={`flex items-center gap-3 px-4 py-2 rounded-xl cursor-pointer ${currentPageName === 'MonCompte' ? 'bg-gray-100' : 'hover:bg-gray-100'}`}>
-                <UserCircle className="w-10 h-10 text-gray-400" />
+                <UserCircle className="w-8 h-8 text-gray-400" />
                 <div>
                   <p className="font-semibold text-gray-800">Mon Compte</p>
                   <p className="text-xs text-gray-500">Accéder à mon profil</p>

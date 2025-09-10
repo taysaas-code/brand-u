@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { User } from '@/api/entities';
+import { useAuth } from '@/contexts/AuthContext';
 import { Project } from '@/api/entities';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -34,38 +34,30 @@ import {
 import LoadingSpinner from '../components/LoadingSpinner';
 
 export default function MonCompte() {
-  const [user, setUser] = useState(null);
+  const { user, isAuthenticated, logout } = useAuth();
   const [projects, setProjects] = useState([]); // Renamed to "identitesVisuelles" in UI, but variable name remains "projects" as it holds the same data type.
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Check authentication by trying to get user data directly
-        const currentUser = await User.me();
-        setUser(currentUser);
-        
-        // If we get here, user is authenticated, load projects
-        const userProjects = await Project.filter({ status: 'active' }, '-created_date');
-        setProjects(userProjects);
-      } catch (error) {
-        // If any error occurs (including 401), redirect to home
-        if (error.message?.includes('You cannot view other users without being logged in') || 
-            error.response?.status === 401 ||
-            error.message?.includes('401')) {
-          navigate(createPageUrl("Accueil"));
-          return;
-        } else {
-          // Only log unexpected errors, not authentication errors
-          console.error("Erreur lors du chargement des données:", error);
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+    
+    loadProjects();
+  }, [isAuthenticated, navigate]);
+
+  const loadProjects = async () => {
+    try {
+      const userProjects = await Project.filter({ status: 'active' }, '-created_date');
+      setProjects(userProjects);
+    } catch (error) {
+      console.error("Erreur lors du chargement des projets:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
@@ -79,6 +71,9 @@ export default function MonCompte() {
     );
   }
 
+  if (!isAuthenticated || !user) {
+    return null; // Will redirect to login
+  }
   return (
     <div className="h-screen overflow-y-auto bg-gray-50 p-6 md:p-8">
       <div className="max-w-6xl mx-auto">
@@ -99,8 +94,8 @@ export default function MonCompte() {
               <CardContent className="space-y-6">
                 <div className="flex items-center gap-4">
                   <Avatar className="h-20 w-20">
-                    <AvatarImage src={user?.photo_url || `https://avatar.vercel.sh/${user?.email}.png`} alt={user?.full_name} />
-                    <AvatarFallback>{user?.full_name?.charAt(0)}</AvatarFallback>
+                    <AvatarImage src={user?.picture || `https://avatar.vercel.sh/${user?.email}.png`} alt={user?.name} />
+                    <AvatarFallback>{user?.name?.charAt(0) || user?.email?.charAt(0)}</AvatarFallback>
                   </Avatar>
                   <div>
                     <Button variant="outline">Changer la photo</Button>
@@ -110,18 +105,12 @@ export default function MonCompte() {
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="fullName">Nom complet</Label>
-                    <Input id="fullName" defaultValue={user?.full_name} />
+                    <Input id="fullName" defaultValue={user?.name} />
                   </div>
                   <div>
                     <Label htmlFor="email">Adresse e-mail</Label>
                     <Input id="email" type="email" defaultValue={user?.email} disabled />
                   </div>
-                </div>
-                <div>
-                  <Label>Rôle</Label>
-                  <p className="text-sm font-medium text-blue-600 bg-blue-100 px-3 py-2 rounded-md inline-block mt-1">
-                    {user?.role === 'admin' ? 'Administrateur' : 'Utilisateur'}
-                  </p>
                 </div>
                 <div className="flex justify-between items-center border-t pt-4">
                   <Button variant="link" className="p-0">Changer mon mot de passe</Button>
@@ -245,7 +234,22 @@ export default function MonCompte() {
               </CardContent>
             </Card>
             
-            <Button variant="destructive" className="w-full" onClick={() => confirm("Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.")}>Supprimer mon compte</Button>
+            <div className="space-y-2">
+              <Button 
+                variant="outline" 
+                className="w-full" 
+                onClick={logout}
+              >
+                Se déconnecter
+              </Button>
+              <Button 
+                variant="destructive" 
+                className="w-full" 
+                onClick={() => confirm("Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.")}
+              >
+                Supprimer mon compte
+              </Button>
+            </div>
 
           </div>
         </div>
