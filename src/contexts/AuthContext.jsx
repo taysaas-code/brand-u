@@ -28,9 +28,13 @@ export const AuthProvider = ({ children }) => {
       } catch (error) {
         console.error('Error parsing stored user data:', error);
         localStorage.removeItem('user');
+        setUser(null);
+        setIsAuthenticated(false);
       }
     } else {
       console.log('AuthProvider: No stored user found');
+      setUser(null);
+      setIsAuthenticated(false);
     }
     setIsLoading(false);
   }, []);

@@ -46,7 +46,7 @@ export default function MonCompte() {
     if (!authLoading) {
       if (!isAuthenticated) {
         console.log('User not authenticated, redirecting to login');
-        navigate('/login');
+        navigate(createPageUrl("Accueil"));
         return;
       }
       // Si authentifié, charger les données
@@ -102,11 +102,11 @@ export default function MonCompte() {
     try {
       logout();
       toast?.success?.("Déconnexion réussie");
-      navigate('/');
+      navigate(createPageUrl("Accueil"));
     } catch (error) {
       console.error('Logout error:', error);
       // Forcer la déconnexion même en cas d'erreur
-      navigate('/');
+      navigate(createPageUrl("Accueil"));
     }
   };
 
