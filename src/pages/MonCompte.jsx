@@ -42,34 +42,38 @@ export default function MonCompte() {
   const toast = useToast();
 
   useEffect(() => {
-    // Si authentifié, charger les données
-    if (isAuthenticated && !authLoading) {
-      loadProjects();
+    console.log('MonCompte - Auth state:', { isAuthenticated, authLoading, user });
+    
+    // Si pas en cours de chargement d'auth
+    if (!authLoading) {
+      if (isAuthenticated && user) {
+        // Utilisateur authentifié, charger les données
+        loadProjects();
+      } else {
+        // Pas authentifié, utiliser des données de démo
+        console.log('User not authenticated, using demo data');
+        setIsLoading(false);
+      }
     }
-  }, [isAuthenticated, authLoading]);
-
-  useEffect(() => {
-    // Debug pour voir l'état d'authentification
-    console.log('Auth state:', { isAuthenticated, authLoading, user });
   }, [isAuthenticated, authLoading, user]);
 
   const loadProjects = async () => {
     try {
       setIsLoading(true);
       
-      // Essayer de charger depuis l'API d'abord
+      // Try to load from API first
       try {
         const userProjects = await Project.filter({ status: "active" }, "-created_date");
         setProjects(userProjects);
       } catch (apiError) {
         console.log('API not available, using localStorage fallback');
         
-        // Fallback vers localStorage
+        // Fallback to localStorage
         const savedProjects = localStorage.getItem(`projects_${user?.id || 'demo'}`);
         if (savedProjects) {
           setProjects(JSON.parse(savedProjects));
         } else {
-          // Projets de démonstration
+          // Demo projects
           const demoProjects = [
             {
               id: '1',
@@ -128,17 +132,6 @@ export default function MonCompte() {
     );
   }
 
-  // Si pas authentifié après le chargement, ne rien afficher (redirection en cours)
-  if (!isAuthenticated) {
-    return (
-      <div className="h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-gray-600">Redirection vers la page de connexion...</p>
-        </div>
-      </div>
-    );
-  }
-
   // Loading state pour les données utilisateur
   if (isLoading) {
     return (
@@ -192,11 +185,11 @@ export default function MonCompte() {
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="fullName">Nom complet</Label>
-                    <Input id="fullName" defaultValue={user?.name || ''} />
+                    <Input id="fullName" defaultValue={user?.name || 'Utilisateur Démo'} />
                   </div>
                   <div>
                     <Label htmlFor="email">Adresse e-mail</Label>
-                    <Input id="email" type="email" defaultValue={user?.email || ''} disabled />
+                    <Input id="email" type="email" defaultValue={user?.email || 'demo@brand-u.com'} disabled />
                   </div>
                 </div>
                 <div className="flex justify-between items-center border-t pt-4">

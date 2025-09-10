@@ -92,7 +92,7 @@ function PagesContent() {
                 
                 <Route path="/Ressources" element={<Ressources />} />
                 
-                <Route path="/IdentiteVisuelle" element={<ProtectedRoute><IdentiteVisuelle /></ProtectedRoute>} />
+                <Route path="/IdentiteVisuelle" element={<IdentiteVisuelle />} />
                 
                 <Route path="/ChatReseauxSociaux" element={<ChatReseauxSociaux />} />
                 
@@ -102,7 +102,7 @@ function PagesContent() {
                 
                 <Route path="/ProjetDetail" element={<ProjetDetail />} />
                 
-                <Route path="/MonCompte" element={<ProtectedRoute><MonCompte /></ProtectedRoute>} />
+                <Route path="/MonCompte" element={<MonCompte />} />
                 
             </Routes>
         </Layout>
