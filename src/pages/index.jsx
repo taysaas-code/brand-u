@@ -23,6 +23,7 @@ import ChatWeb from "./ChatWeb";
 import ProjetDetail from "./ProjetDetail";
 
 import MonCompte from "./MonCompte";
+import ProtectedRoute from "../components/ProtectedRoute";
 
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 
@@ -91,7 +92,7 @@ function PagesContent() {
                 
                 <Route path="/Ressources" element={<Ressources />} />
                 
-                <Route path="/IdentiteVisuelle" element={<IdentiteVisuelle />} />
+                <Route path="/IdentiteVisuelle" element={<ProtectedRoute><IdentiteVisuelle /></ProtectedRoute>} />
                 
                 <Route path="/ChatReseauxSociaux" element={<ChatReseauxSociaux />} />
                 
