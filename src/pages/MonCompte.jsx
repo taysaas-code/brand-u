@@ -1,9 +1,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { Project } from '@/api/entities';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import { useToast } from '@/components/GlobalToast';
 import {
   User as UserIcon,
   Bell,
@@ -34,36 +34,62 @@ import {
 import LoadingSpinner from '../components/LoadingSpinner';
 
 export default function MonCompte() {
-  const { user, isAuthenticated, logout } = useAuth();
+  const { user, isAuthenticated, logout, isLoading: authLoading } = useAuth();
   const [projects, setProjects] = useState([]); // Renamed to "identitesVisuelles" in UI, but variable name remains "projects" as it holds the same data type.
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
+  const { success, error } = useToast();
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (!authLoading && !isAuthenticated) {
       navigate('/login');
       return;
     }
     
-    loadProjects();
-  }, [isAuthenticated, navigate]);
+    if (isAuthenticated) {
+      loadProjects();
+    }
+  }, [isAuthenticated, authLoading, navigate]);
 
   const loadProjects = async () => {
     try {
-      const userProjects = await Project.filter({ status: 'active' }, '-created_date');
-      setProjects(userProjects);
+      // Simulation de chargement des projets depuis localStorage ou API
+      const savedProjects = localStorage.getItem(`projects_${user?.id}`);
+      if (savedProjects) {
+        setProjects(JSON.parse(savedProjects));
+      } else {
+        // Projets de démonstration
+        const demoProjects = [
+          {
+            id: '1',
+            name: 'Identité Marque Principal',
+            description: 'Projet principal de votre marque',
+            created_date: new Date().toISOString(),
+            session_id: 'demo_session_1'
+          }
+        ];
+        setProjects(demoProjects);
+        localStorage.setItem(`projects_${user?.id}`, JSON.stringify(demoProjects));
+      }
     } catch (error) {
       console.error("Erreur lors du chargement des projets:", error);
+      error("Erreur lors du chargement des projets");
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleLogout = () => {
+    logout();
+    success("Déconnexion réussie");
+    navigate('/');
   };
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
   };
   
-  if (isLoading) {
+  if (authLoading || isLoading) {
     return (
       <div className="h-screen bg-gray-50 flex items-center justify-center">
         <LoadingSpinner text="Chargement de votre compte..." size="xl" />
@@ -238,7 +264,7 @@ export default function MonCompte() {
               <Button 
                 variant="outline" 
                 className="w-full" 
-                onClick={logout}
+                onClick={handleLogout}
               >
                 Se déconnecter
               </Button>

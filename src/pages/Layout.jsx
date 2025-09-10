@@ -3,11 +3,13 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import { useAuth } from "@/contexts/AuthContext";
 import { Palette, ArrowLeft, UserCircle, Bot, BookOpen, FolderOpen, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function Layout({ children, currentPageName }) {
   const location = useLocation();
+  const { user, logout } = useAuth();
   const isOnboarding = ['UploadVisuels', 'UploadTexte', 'Analyse'].includes(currentPageName);
   const hasSidebar = ['Chat', 'ChatReseauxSociaux', 'ChatCreationContenu', 'ChatWeb', 'Ressources', 'IdentiteVisuelle', 'ProjetDetail', 'MonCompte'].includes(currentPageName);
 
@@ -123,10 +125,14 @@ export default function Layout({ children, currentPageName }) {
           <div className="mt-8 border-t border-gray-100 pt-4">
             <Link to={createPageUrl('MonCompte')} className="block">
               <div className={`flex items-center gap-3 px-4 py-2 rounded-xl cursor-pointer ${currentPageName === 'MonCompte' ? 'bg-gray-100' : 'hover:bg-gray-100'}`}>
-                <UserCircle className="w-8 h-8 text-gray-400" />
+                {user?.picture ? (
+                  <img src={user.picture} alt={user.name} className="w-8 h-8 rounded-full" />
+                ) : (
+                  <UserCircle className="w-8 h-8 text-gray-400" />
+                )}
                 <div>
-                  <p className="font-semibold text-gray-800">Mon Compte</p>
-                  <p className="text-xs text-gray-500">Accéder à mon profil</p>
+                  <p className="font-semibold text-gray-800">{user?.name || 'Mon Compte'}</p>
+                  <p className="text-xs text-gray-500">{user?.email || 'Accéder à mon profil'}</p>
                 </div>
               </div>
             </Link>

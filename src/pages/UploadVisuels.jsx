@@ -5,7 +5,7 @@ import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { UploadFile } from "@/api/integrations";
-import { BrandAsset, UserSession } from "@/api/entities";
+import { useToast } from "@/components/GlobalToast";
 import StepIndicator from "../components/StepIndicator";
 import FileUploadZone from "../components/FileUploadZone";
 
@@ -15,24 +15,27 @@ export default function UploadVisuels() {
   const [isUploading, setIsUploading] = useState(false);
   const [projectName, setProjectName] = useState("");
   const [sessionId] = useState(() => `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
+  const { success, error } = useToast();
 
   useEffect(() => {
     const initializeSession = async () => {
       try {
-        // Créer ou mettre à jour la session utilisateur
-        await UserSession.create({
+        // Sauvegarder la session en localStorage
+        const sessionData = {
           session_id: sessionId,
           current_step: 0,
           has_visual_assets: false,
-          has_textual_assets: false
-        });
+          has_textual_assets: false,
+          created_date: new Date().toISOString()
+        };
+        localStorage.setItem(`session_${sessionId}`, JSON.stringify(sessionData));
       } catch (error) {
         console.log("Error initializing session:", error);
       }
     };
     
     initializeSession();
-  }, [sessionId, navigate]);
+  }, [sessionId]);
 
   const handleFilesSelected = (selectedFiles) => {
     const validFiles = selectedFiles.filter(file => {
@@ -48,15 +51,17 @@ export default function UploadVisuels() {
   };
 
   const handleSkip = async () => {
-    // Mettre à jour la session pour indiquer qu'on passe cette étape
-    const sessions = await UserSession.filter({ session_id: sessionId });
-    if (sessions.length > 0) {
-      await UserSession.update(sessions[0].id, {
-        current_step: 1,
-        has_visual_assets: false
-      });
+    try {
+      // Mettre à jour la session en localStorage
+      const sessionData = JSON.parse(localStorage.getItem(`session_${sessionId}`) || '{}');
+      sessionData.current_step = 1;
+      sessionData.has_visual_assets = false;
+      localStorage.setItem(`session_${sessionId}`, JSON.stringify(sessionData));
+      
+      navigate(createPageUrl("UploadTexte") + `?session=${sessionId}`);
+    } catch (err) {
+      error("Erreur lors de la navigation");
     }
-    navigate(createPageUrl("UploadTexte") + `?session=${sessionId}`);
   };
 
   const handleContinue = async () => {
@@ -65,35 +70,38 @@ export default function UploadVisuels() {
       return;
     }
 
-    // Log du nom du projet pour test
-    console.log("Nom du projet:", projectName);
-
     setIsUploading(true);
     try {
-      // Upload chaque fichier et créer les assets de marque
+      const uploadedFiles = [];
+      
+      // Simuler l'upload des fichiers
       for (const file of files) {
-        const { file_url } = await UploadFile({ file });
-        await BrandAsset.create({
-          file_url,
+        // En production, utiliser UploadFile({ file })
+        const fileData = {
+          file_url: URL.createObjectURL(file), // Simulation
           file_name: file.name,
           file_type: 'visual',
           file_format: file.type,
           session_id: sessionId
-        });
+        };
+        uploadedFiles.push(fileData);
       }
 
-      // Mettre à jour la session
-      const sessions = await UserSession.filter({ session_id: sessionId });
-      if (sessions.length > 0) {
-        await UserSession.update(sessions[0].id, {
-          current_step: 1,
-          has_visual_assets: true
-        });
-      }
+      // Sauvegarder les fichiers et mettre à jour la session
+      localStorage.setItem(`assets_${sessionId}`, JSON.stringify(uploadedFiles));
+      
+      const sessionData = JSON.parse(localStorage.getItem(`session_${sessionId}`) || '{}');
+      sessionData.current_step = 1;
+      sessionData.has_visual_assets = true;
+      sessionData.project_name = projectName;
+      localStorage.setItem(`session_${sessionId}`, JSON.stringify(sessionData));
+
+      success("Fichiers uploadés avec succès !");
 
       navigate(createPageUrl("UploadTexte") + `?session=${sessionId}`);
     } catch (error) {
       console.error("Erreur lors de l'upload:", error);
+      error("Erreur lors de l'upload des fichiers");
     }
     setIsUploading(false);
   };
