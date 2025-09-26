@@ -5,6 +5,7 @@ import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { UploadFile } from "@/api/integrations";
+import { BrandAsset, UserSession, Project } from "@/api/entities";
 import { useToast } from "@/components/GlobalToast";
 import StepIndicator from "../components/StepIndicator";
 import FileUploadZone from "../components/FileUploadZone";
@@ -13,14 +14,25 @@ export default function UploadVisuels() {
   const navigate = useNavigate();
   const [files, setFiles] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
-  const [projectName, setProjectName] = useState("");
+  const [projectName, setProjectName] = useState("Mon Projet");
   const [sessionId] = useState(() => `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
   const { success, error } = useToast();
 
   useEffect(() => {
     const initializeSession = async () => {
       try {
-        // Sauvegarder la session en localStorage
+        // Créer la session dans la base de données
+        await UserSession.create({
+          session_id: sessionId,
+          current_step: 0,
+          has_visual_assets: false,
+          has_textual_assets: false,
+        });
+        
+        console.log("Session initialisée:", sessionId);
+      } catch (error) {
+        console.error("Erreur lors de l'initialisation de la session:", error);
+        // Fallback vers localStorage si l'API échoue
         const sessionData = {
           session_id: sessionId,
           current_step: 0,
@@ -29,8 +41,6 @@ export default function UploadVisuels() {
           created_date: new Date().toISOString()
         };
         localStorage.setItem(`session_${sessionId}`, JSON.stringify(sessionData));
-      } catch (error) {
-        console.log("Error initializing session:", error);
       }
     };
     
@@ -52,14 +62,36 @@ export default function UploadVisuels() {
 
   const handleSkip = async () => {
     try {
-      // Mettre à jour la session en localStorage
-      const sessionData = JSON.parse(localStorage.getItem(`session_${sessionId}`) || '{}');
-      sessionData.current_step = 1;
-      sessionData.has_visual_assets = false;
-      localStorage.setItem(`session_${sessionId}`, JSON.stringify(sessionData));
+      // Créer le projet avec le nom saisi
+      if (projectName.trim()) {
+        await Project.create({
+          name: projectName,
+          session_id: sessionId,
+          status: "active"
+        });
+      }
+      
+      // Mettre à jour la session
+      try {
+        const sessions = await UserSession.filter({ session_id: sessionId });
+        if (sessions.length > 0) {
+          await UserSession.update(sessions[0].id, {
+            current_step: 1,
+            has_visual_assets: false
+          });
+        }
+      } catch (apiError) {
+        console.log("API non disponible, utilisation du localStorage");
+        const sessionData = JSON.parse(localStorage.getItem(`session_${sessionId}`) || '{}');
+        sessionData.current_step = 1;
+        sessionData.has_visual_assets = false;
+        sessionData.project_name = projectName;
+        localStorage.setItem(`session_${sessionId}`, JSON.stringify(sessionData));
+      }
       
       navigate(createPageUrl("UploadTexte") + `?session=${sessionId}`);
     } catch (err) {
+      console.error("Erreur lors de la navigation:", err);
       error("Erreur lors de la navigation");
     }
   };
@@ -70,38 +102,79 @@ export default function UploadVisuels() {
       return;
     }
 
+    if (!projectName.trim()) {
+      error("Veuillez saisir un nom de projet");
+      return;
+    }
+
     setIsUploading(true);
     try {
-      const uploadedFiles = [];
+      // Créer le projet d'abord
+      await Project.create({
+        name: projectName,
+        session_id: sessionId,
+        status: "active"
+      });
       
-      // Simuler l'upload des fichiers
+      console.log("Projet créé:", projectName);
+      
+      // Upload des fichiers
       for (const file of files) {
-        // En production, utiliser UploadFile({ file })
-        const fileData = {
-          file_url: URL.createObjectURL(file), // Simulation
+        try {
+          // Upload réel du fichier
+          const { file_url } = await UploadFile({ file });
+          
+          // Créer l'asset de marque
+          await BrandAsset.create({
+            file_url,
+            file_name: file.name,
+            file_type: 'visual',
+            file_format: file.type,
+            session_id: sessionId
+          });
+          
+          console.log("Fichier uploadé:", file.name);
+        } catch (uploadError) {
+          console.error("Erreur upload fichier:", file.name, uploadError);
+          // Continuer avec les autres fichiers même si un échoue
+        }
+      }
+
+      // Mettre à jour la session
+      try {
+        const sessions = await UserSession.filter({ session_id: sessionId });
+        if (sessions.length > 0) {
+          await UserSession.update(sessions[0].id, {
+            current_step: 1,
+            has_visual_assets: true
+          });
+        }
+      } catch (apiError) {
+        console.log("API non disponible, utilisation du localStorage");
+        // Fallback localStorage
+        const uploadedFiles = files.map(file => ({
+          file_url: URL.createObjectURL(file),
           file_name: file.name,
           file_type: 'visual',
           file_format: file.type,
           session_id: sessionId
-        };
-        uploadedFiles.push(fileData);
+        }));
+        
+        localStorage.setItem(`assets_${sessionId}`, JSON.stringify(uploadedFiles));
+        
+        const sessionData = JSON.parse(localStorage.getItem(`session_${sessionId}`) || '{}');
+        sessionData.current_step = 1;
+        sessionData.has_visual_assets = true;
+        sessionData.project_name = projectName;
+        localStorage.setItem(`session_${sessionId}`, JSON.stringify(sessionData));
       }
 
-      // Sauvegarder les fichiers et mettre à jour la session
-      localStorage.setItem(`assets_${sessionId}`, JSON.stringify(uploadedFiles));
-      
-      const sessionData = JSON.parse(localStorage.getItem(`session_${sessionId}`) || '{}');
-      sessionData.current_step = 1;
-      sessionData.has_visual_assets = true;
-      sessionData.project_name = projectName;
-      localStorage.setItem(`session_${sessionId}`, JSON.stringify(sessionData));
-
-      success("Fichiers uploadés avec succès !");
+      success(`Projet "${projectName}" créé avec ${files.length} fichier(s) !`);
 
       navigate(createPageUrl("UploadTexte") + `?session=${sessionId}`);
     } catch (error) {
       console.error("Erreur lors de l'upload:", error);
-      error("Erreur lors de l'upload des fichiers");
+      error("Erreur lors de la création du projet");
     }
     setIsUploading(false);
   };
