@@ -113,7 +113,7 @@ export default function UploadVisuels() {
       await Project.create({
         name: projectName,
         session_id: sessionId,
-        status: "active"
+        status: "active",
         project_name: projectName
       });
       
