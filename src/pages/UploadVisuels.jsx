@@ -89,7 +89,7 @@ export default function UploadVisuels() {
         localStorage.setItem(`session_${sessionId}`, JSON.stringify(sessionData));
       }
       
-      navigate(createPageUrl("UploadTexte") + `?session=${sessionId}`);
+      navigate(createPageUrl("UploadTexte") + `?session=${sessionId}&projectName=${encodeURIComponent(projectName)}`);
     } catch (err) {
       console.error("Erreur lors de la navigation:", err);
       error("Erreur lors de la navigation");
@@ -114,6 +114,7 @@ export default function UploadVisuels() {
         name: projectName,
         session_id: sessionId,
         status: "active"
+        project_name: projectName
       });
       
       console.log("Projet créé:", projectName);
@@ -171,7 +172,7 @@ export default function UploadVisuels() {
 
       success(`Projet "${projectName}" créé avec ${files.length} fichier(s) !`);
 
-      navigate(createPageUrl("UploadTexte") + `?session=${sessionId}`);
+      navigate(createPageUrl("UploadTexte") + `?session=${sessionId}&projectName=${encodeURIComponent(projectName)}`);
     } catch (error) {
       console.error("Erreur lors de l'upload:", error);
       error("Erreur lors de la création du projet");

@@ -17,14 +17,19 @@ export default function UploadTexte() {
   const [projectName, setProjectName] = useState("projet 1");
   const urlParams = new URLSearchParams(window.location.search);
   const sessionId = urlParams.get('session');
+  const projectNameFromUrl = urlParams.get('projectName');
 
   useEffect(() => {
     if (!sessionId) {
       navigate(createPageUrl("IdentiteVisuelle"));
     } else {
+      // Utiliser le nom du projet passé en paramètre
+      if (projectNameFromUrl) {
+        setProjectName(decodeURIComponent(projectNameFromUrl));
+      }
       loadVisualAssetsCount();
     }
-  }, [sessionId, navigate]);
+  }, [sessionId, projectNameFromUrl, navigate]);
 
   const loadVisualAssetsCount = async () => {
     try {
@@ -64,7 +69,7 @@ export default function UploadTexte() {
         has_textual_assets: false
       });
     }
-    navigate(createPageUrl("Analyse") + `?session=${sessionId}`);
+    navigate(createPageUrl("Analyse") + `?session=${sessionId}&projectName=${encodeURIComponent(projectName)}`);
   };
 
   const handleContinue = async () => {
@@ -96,7 +101,7 @@ export default function UploadTexte() {
         });
       }
 
-      navigate(createPageUrl("Analyse") + `?session=${sessionId}`);
+      navigate(createPageUrl("Analyse") + `?session=${sessionId}&projectName=${encodeURIComponent(projectName)}`);
     } catch (error) {
       console.error("Erreur lors de l'upload:", error);
     }

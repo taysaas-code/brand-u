@@ -16,6 +16,7 @@ export default function Analyse() {
   const [totalFiles, setTotalFiles] = useState(0);
   const urlParams = new URLSearchParams(window.location.search);
   const sessionId = urlParams.get('session');
+  const projectNameFromUrl = urlParams.get('projectName');
 
   const analysisSteps = [
     {
@@ -52,9 +53,13 @@ export default function Analyse() {
       navigate(createPageUrl("IdentiteVisuelle"));
       return;
     }
+    // Utiliser le nom du projet passé en paramètre
+    if (projectNameFromUrl) {
+      setProjectName(decodeURIComponent(projectNameFromUrl));
+    }
     loadProjectData();
     startAnalysis();
-  }, [sessionId, navigate]);
+  }, [sessionId, projectNameFromUrl, navigate]);
 
   const loadProjectData = async () => {
     try {
