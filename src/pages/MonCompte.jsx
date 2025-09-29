@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useToast } from '@/components/GlobalToast';
 import { Project } from '@/api/entities';
@@ -40,8 +40,6 @@ export default function MonCompte() {
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const toast = useToast();
-
-  const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
