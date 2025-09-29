@@ -35,13 +35,22 @@ import {
 import LoadingSpinner from '../components/LoadingSpinner';
 
 export default function MonCompte() {
-  const { user, isAuthenticated, logout, isLoading: authLoading } = useAuth();
+  const { user, isAuthenticated, signOut, isLoading: authLoading } = useAuth();
   const [projects, setProjects] = useState([]); // Renamed to "identitesVisuelles" in UI, but variable name remains "projects" as it holds the same data type.
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const toast = useToast();
 
+  const navigate = useNavigate();
+  const location = useLocation();
+
   useEffect(() => {
+    // Redirect to auth if not authenticated
+    if (!authLoading && !isAuthenticated) {
+      navigate('/auth?redirectTo=' + encodeURIComponent(location.pathname));
+      return;
+    }
+    
     console.log('MonCompte - Auth state:', { isAuthenticated, authLoading, user });
     
     // Si pas en cours de chargement d'auth
@@ -98,7 +107,7 @@ export default function MonCompte() {
 
   const handleLogout = () => {
     try {
-      logout();
+      signOut();
       toast?.success?.("Déconnexion réussie");
       navigate(createPageUrl("Accueil"));
     } catch (error) {

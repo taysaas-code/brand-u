@@ -42,7 +42,7 @@ export default function Auth() {
   const [isLoading, setIsLoading] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   
-  const { signIn, signUp, signInWithGoogle, resetPassword, isAuthenticated } = useAuth();
+  const { signIn, signUp, signInWithGoogle, resetPassword, isAuthenticated, loginDemo } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
@@ -160,6 +160,29 @@ export default function Auth() {
     }
 
     setIsLoading(false);
+  };
+
+  // Demo login for development
+  const handleDemoLogin = async () => {
+    setIsLoading(true);
+    try {
+      const demoUser = {
+        id: 'demo',
+        email: 'demo@brand-u.com',
+        name: 'Utilisateur Démo',
+        picture: 'https://avatar.vercel.sh/demo.png'
+      };
+      
+      await loginDemo(demoUser);
+      navigate('/identitevisuelle');
+    } catch (err) {
+      setMessage({
+        type: 'error',
+        content: 'Erreur lors de la connexion démo'
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   if (showForgotPassword) {
@@ -485,6 +508,16 @@ export default function Auth() {
                   </svg>
                 )}
                 Continuer avec Google
+              </Button>
+
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full mt-2"
+                onClick={handleDemoLogin}
+                disabled={isLoading}
+              >
+                Essayer la démo
               </Button>
             </div>
           </CardContent>

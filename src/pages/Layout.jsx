@@ -6,10 +6,12 @@ import { createPageUrl } from "@/utils";
 import { useAuth } from "@/contexts/AuthContext";
 import { Palette, ArrowLeft, UserCircle, Bot, BookOpen, FolderOpen, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 export default function Layout({ children, currentPageName }) {
   const location = useLocation();
-  const { user, logout } = useAuth();
+  const { user, signOut, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
   const isOnboarding = ['UploadVisuels', 'UploadTexte', 'Analyse'].includes(currentPageName);
   const hasSidebar = ['Chat', 'ChatReseauxSociaux', 'ChatCreationContenu', 'ChatWeb', 'Ressources', 'IdentiteVisuelle', 'ProjetDetail', 'MonCompte'].includes(currentPageName);
 
@@ -123,6 +125,7 @@ export default function Layout({ children, currentPageName }) {
           </nav>
           
           <div className="mt-8 border-t border-gray-100 pt-4">
+            {isAuthenticated ? (
             <Link to={createPageUrl("MonCompte")} className="block">
               <div className={`flex items-center gap-3 px-4 py-2 rounded-xl cursor-pointer ${currentPageName === 'MonCompte' ? 'bg-gray-100' : 'hover:bg-gray-100'}`}>
                 {user?.picture ? (
@@ -136,6 +139,14 @@ export default function Layout({ children, currentPageName }) {
                 </div>
               </div>
             </Link>
+            ) : (
+              <Button 
+                onClick={() => navigate('/auth')}
+                className="w-full bg-blue-600 hover:bg-blue-700"
+              >
+                Se connecter
+              </Button>
+            )}
           </div>
         </aside>
 

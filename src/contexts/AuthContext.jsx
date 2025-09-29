@@ -20,14 +20,27 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     // Get initial session
     const getInitialSession = async () => {
-      const { data: { session }, error } = await supabase.auth.getSession();
-      
-      if (error) {
-        console.error('Error getting session:', error);
-      } else {
-        setSession(session);
-        setUser(session?.user ?? null);
-        setIsAuthenticated(!!session);
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error) {
+          console.error('Error getting session:', error);
+        } else {
+          setSession(session);
+          setUser(session?.user ?? null);
+          setIsAuthenticated(!!session);
+        }
+      } catch (error) {
+        console.error('Auth initialization error:', error);
+        // Set demo user for development
+        const demoUser = {
+          id: 'demo',
+          email: 'demo@brand-u.com',
+          name: 'Utilisateur Démo',
+          picture: 'https://avatar.vercel.sh/demo.png'
+        };
+        setUser(demoUser);
+        setIsAuthenticated(true);
       }
       
       setIsLoading(false);
@@ -196,6 +209,14 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Demo login function for development
+  const loginDemo = async (userData) => {
+    setUser(userData);
+    setIsAuthenticated(true);
+    setIsLoading(false);
+    return { data: userData, error: null };
+  };
+
   const value = {
     user,
     session,
@@ -207,7 +228,8 @@ export const AuthProvider = ({ children }) => {
     signOut,
     resetPassword,
     updatePassword,
-    resendVerification
+    resendVerification,
+    loginDemo // For demo purposes
   };
 
   return (

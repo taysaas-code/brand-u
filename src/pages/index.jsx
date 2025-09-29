@@ -24,6 +24,9 @@ import ProjetDetail from "./ProjetDetail";
 
 import MonCompte from "./MonCompte";
 import ProtectedRoute from "../components/ProtectedRoute";
+import Auth from "./Auth";
+import AuthCallback from "./AuthCallback";
+import ResetPassword from "./ResetPassword";
 
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 
@@ -52,6 +55,12 @@ const PAGES = {
     ProjetDetail: ProjetDetail,
     
     MonCompte: MonCompte,
+    
+    Auth: Auth,
+    
+    AuthCallback: AuthCallback,
+    
+    ResetPassword: ResetPassword,
     
 }
 
@@ -103,6 +112,12 @@ function PagesContent() {
                 <Route path="/ProjetDetail" element={<ProjetDetail />} />
                 
                 <Route path="/MonCompte" element={<MonCompte />} />
+                
+                <Route path="/auth" element={<Auth />} />
+                
+                <Route path="/auth/callback" element={<AuthCallback />} />
+                
+                <Route path="/auth/reset-password" element={<ResetPassword />} />
                 
             </Routes>
         </Layout>

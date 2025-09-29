@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { Project, UserSession, BrandAsset } from "@/api/entities";
 import { User } from "@/api/entities";
+import { useAuth } from "@/contexts/AuthContext";
 import { 
   DropdownMenu,
   DropdownMenuContent,
@@ -29,6 +30,7 @@ import {
 
 export default function IdentiteVisuelle() {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
   const [projects, setProjects] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [showNewProject, setShowNewProject] = useState(false);
@@ -44,6 +46,12 @@ export default function IdentiteVisuelle() {
   const [activeSessionId, setActiveSessionId] = useState(null); // Added from outline
 
   useEffect(() => {
+    // Redirect to auth if not authenticated
+    if (!isAuthenticated) {
+      navigate('/auth?redirectTo=' + encodeURIComponent(location.pathname));
+      return;
+    }
+    
     const storedSessionId = sessionStorage.getItem('active_project_session_id');
     if (storedSessionId) {
       setActiveSessionId(storedSessionId);
