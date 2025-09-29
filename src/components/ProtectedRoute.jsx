@@ -16,8 +16,8 @@ export default function ProtectedRoute({ children }) {
   }
 
   if (!isAuthenticated) {
-    // Sauvegarder la page demandée pour rediriger après connexion
-    return <Navigate to="/" state={{ from: location }} replace />;
+    // Save the attempted location for redirecting after login
+    return <Navigate to={`/auth?redirectTo=${encodeURIComponent(location.pathname)}`} replace />;
   }
 
   return children;
