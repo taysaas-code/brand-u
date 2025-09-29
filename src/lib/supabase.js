@@ -3,10 +3,12 @@ import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
+let supabase;
+
 if (!supabaseUrl || !supabaseAnonKey) {
   console.warn('Supabase environment variables not found. Using demo mode.')
   // Create a mock client for demo purposes
-  export const supabase = {
+  supabase = {
     auth: {
       getSession: () => Promise.resolve({ data: { session: null }, error: null }),
       signUp: () => Promise.resolve({ data: null, error: { message: 'Demo mode - Supabase not configured' } }),
@@ -17,10 +19,16 @@ if (!supabaseUrl || !supabaseAnonKey) {
       updateUser: () => Promise.resolve({ data: null, error: { message: 'Demo mode - Supabase not configured' } }),
       resend: () => Promise.resolve({ data: null, error: { message: 'Demo mode - Supabase not configured' } }),
       onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } })
-    }
+    },
+    from: () => ({
+      select: () => Promise.resolve({ data: [], error: null }),
+      insert: () => Promise.resolve({ data: null, error: { message: 'Demo mode - Supabase not configured' } }),
+      update: () => Promise.resolve({ data: null, error: { message: 'Demo mode - Supabase not configured' } }),
+      delete: () => Promise.resolve({ data: null, error: { message: 'Demo mode - Supabase not configured' } })
+    })
   }
 } else {
-  export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  supabase = createClient(supabaseUrl, supabaseAnonKey, {
     auth: {
       autoRefreshToken: true,
       persistSession: true,
@@ -28,3 +36,5 @@ if (!supabaseUrl || !supabaseAnonKey) {
     }
   })
 }
+
+export { supabase }
