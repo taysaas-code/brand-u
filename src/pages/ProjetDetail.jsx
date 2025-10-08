@@ -175,7 +175,7 @@ export default function ProjetDetail() {
                   {visualAssets.map((asset) => {
                     const FileIcon = getFileIcon(asset);
                     return (
-                      <div key={asset.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                      <div key={asset.id} className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50">
                         <div className="flex items-center gap-3">
                           <FileIcon className="w-5 h-5 text-purple-600" />
                           <div>
@@ -247,7 +247,7 @@ export default function ProjetDetail() {
                   {textualAssets.map((asset) => {
                     const FileIcon = getFileIcon(asset);
                     return (
-                      <div key={asset.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                      <div key={asset.id} className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50">
                         <div className="flex items-center gap-3">
                           <FileIcon className="w-5 h-5 text-blue-600" />
                           <div>

@@ -247,77 +247,6 @@ export default function MonCompte() {
               </CardContent>
             </Card>
 
-            {/* Identités visuelles */}
-            <Card>
-              <CardHeader className="flex flex-row justify-between items-center">
-                <div>
-                    <CardTitle className="flex items-center gap-2">
-                      <FolderKanban className="w-5 h-5" /> 
-                      Mes identités visuelles
-                    </CardTitle>
-                    <CardDescription>
-                      Gérez toutes les identités visuelles que vous avez créées.
-                    </CardDescription>
-                </div>
-                <Button 
-                  variant="outline" 
-                  onClick={() => navigate(createPageUrl('IdentiteVisuelle'))}
-                >
-                  <Plus className="w-4 h-4 mr-2"/> 
-                  Nouvelle identité
-                </Button>
-              </CardHeader>
-              <CardContent>
-                {projects.length === 0 ? (
-                  <div className="text-center py-8 text-gray-500">
-                    <FolderKanban className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-                    <p>Aucune identité visuelle créée</p>
-                    <Button 
-                      variant="outline" 
-                      className="mt-4"
-                      onClick={() => navigate(createPageUrl('IdentiteVisuelle'))}
-                    >
-                      Créer ma première identité
-                    </Button>
-                  </div>
-                ) : (
-                  <ul className="space-y-2">
-                    {projects.map(project => (
-                      <li key={project.id} className="flex justify-between items-center p-3 rounded-lg hover:bg-gray-50">
-                        <div>
-                          <p className="font-medium">{project.name}</p>
-                          <p className="text-xs text-gray-500">Créé le {formatDate(project.created_date)}</p>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            onClick={() => navigate(createPageUrl('ProjetDetail') + `?session=${project.session_id}`)}
-                          >
-                            Voir
-                          </Button>
-                          <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            className="text-gray-500 hover:text-red-600" 
-                            onClick={() => {
-                              if (confirm('Voulez-vous vraiment supprimer cette identité visuelle ?')) {
-                                const updatedProjects = projects.filter(p => p.id !== project.id);
-                                setProjects(updatedProjects);
-                                localStorage.setItem(`projects_${user?.id || 'demo'}`, JSON.stringify(updatedProjects));
-                                toast?.success?.('Identité visuelle supprimée');
-                              }
-                            }}
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </CardContent>
-            </Card>
             
           </div>
 
@@ -340,16 +269,6 @@ export default function MonCompte() {
                       <SelectItem value="en">English</SelectItem>
                     </SelectContent>
                   </Select>
-                </div>
-                <div className="space-y-2 pt-2">
-                    <div className="flex items-center justify-between">
-                        <Label htmlFor="notif-email" className="font-normal">Notifications par e-mail</Label>
-                        <Switch id="notif-email" defaultChecked />
-                    </div>
-                    <div className="flex items-center justify-between">
-                        <Label htmlFor="notif-app" className="font-normal">Notifications in-app</Label>
-                        <Switch id="notif-app" />
-                    </div>
                 </div>
               </CardContent>
             </Card>
