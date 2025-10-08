@@ -471,7 +471,7 @@ export default function IdentiteVisuelle() {
                   </div>
                 </CardHeader>
                 
-                <CardContent className="pb-4">
+                <CardContent>
                   <div className="space-y-3">
                     {/* Status */}
                     <div className="flex items-center gap-2">
@@ -491,6 +491,18 @@ export default function IdentiteVisuelle() {
                         {formatDate(project.lastActivity)}
                       </span>
                     </div>
+
+                    {/* Actions */}
+                    <Button 
+                      className="w-full" 
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevent card click when clicking the button inside
+                        continueProject(project);
+                      }}
+                    >
+                      Ouvrir le projet
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
