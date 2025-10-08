@@ -493,11 +493,12 @@ export default function IdentiteVisuelle() {
                     </div>
 
                     {/* Actions */}
-                    <Button 
-                      className="w-full" 
+                    <Button
+                      variant="outline"
+                      className="w-full border-2 border-gray-300 hover:border-gray-400 hover:bg-gray-50 font-medium"
                       size="sm"
                       onClick={(e) => {
-                        e.stopPropagation(); // Prevent card click when clicking the button inside
+                        e.stopPropagation();
                         continueProject(project);
                       }}
                     >
