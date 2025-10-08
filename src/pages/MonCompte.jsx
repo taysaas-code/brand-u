@@ -199,7 +199,7 @@ export default function MonCompte() {
                     <Input id="email" type="email" defaultValue={user?.email || 'demo@brand-u.com'} disabled />
                   </div>
                 </div>
-                <div className="flex justify-between items-center border-t pt-4">
+                <div className="flex justify-between items-center pt-4">
                   <Button variant="link" className="p-0">Changer mon mot de passe</Button>
                   <Button className="bg-blue-600 hover:bg-blue-700">Enregistrer les changements</Button>
                 </div>
