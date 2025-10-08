@@ -72,6 +72,14 @@ export default function Analyse() {
 
   const startAnalysis = async () => {
     try {
+      // Récupérer les assets pour l'analyse IA
+      const assets = await BrandAsset.filter({ session_id: sessionId });
+
+      // Définir la durée d'animation selon si le projet est vide ou non
+      const hasFiles = assets.length > 0;
+      const totalDuration = hasFiles ? 8000 : 2000; // 8s avec fichiers, 2s sans fichiers
+      const intervalTime = totalDuration / 100; // Diviser la durée par 100 étapes
+
       // Animation de progression fluide
       const animateProgress = () => {
         return new Promise((resolve) => {
@@ -79,19 +87,16 @@ export default function Analyse() {
           const interval = setInterval(() => {
             currentProgress += 1;
             setProgress(currentProgress);
-            
+
             if (currentProgress >= 100) {
               clearInterval(interval);
               resolve();
             }
-          }, 80); // Progression sur ~8 secondes
+          }, intervalTime);
         });
       };
 
       await animateProgress();
-
-      // Récupérer les assets pour l'analyse IA
-      const assets = await BrandAsset.filter({ session_id: sessionId });
       const fileUrls = assets.map(asset => asset.file_url);
       
       let analysisPrompt = `Tu es un expert designer et consultant en identité de marque. Analyse les fichiers fournis et crée un profil complet de marque.
