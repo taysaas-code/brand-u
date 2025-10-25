@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Palette, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { Palette, Eye, EyeOff, Loader2, Chrome } from 'lucide-react';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -16,7 +16,7 @@ export default function Login() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   
-  const { login } = useAuth();
+  const { login, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -55,12 +55,27 @@ export default function Login() {
         name: 'Utilisateur Démo',
         picture: 'https://avatar.vercel.sh/demo.png'
       };
-      
+
       await login(demoUser);
       navigate('/IdentiteVisuelle');
     } catch (err) {
       setError('Erreur lors de la connexion démo');
     } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    setError('');
+    setIsLoading(true);
+    try {
+      const { error } = await signInWithGoogle();
+      if (error) {
+        setError(error.message || 'Erreur lors de la connexion Google');
+        setIsLoading(false);
+      }
+    } catch (err) {
+      setError('Erreur lors de la connexion Google');
       setIsLoading(false);
     }
   };
@@ -158,20 +173,31 @@ export default function Login() {
               </Button>
             </form>
 
-            <div className="mt-6">
+            <div className="mt-6 space-y-3">
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-gray-300" />
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">ou</span>
+                  <span className="px-2 bg-white text-gray-500">ou continuer avec</span>
                 </div>
               </div>
 
               <Button
                 type="button"
                 variant="outline"
-                className="w-full mt-4"
+                className="w-full"
+                onClick={handleGoogleLogin}
+                disabled={isLoading}
+              >
+                <Chrome className="w-5 h-5 mr-2" />
+                Google
+              </Button>
+
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full"
                 onClick={handleDemoLogin}
                 disabled={isLoading}
               >

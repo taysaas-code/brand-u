@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Palette, Eye, EyeOff, Loader2, Check, X } from 'lucide-react';
+import { Palette, Eye, EyeOff, Loader2, Check, X, Chrome } from 'lucide-react';
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -21,7 +21,7 @@ export default function Register() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   
-  const { login } = useAuth();
+  const { login, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
 
   const passwordStrength = (password) => {
@@ -51,6 +51,21 @@ export default function Register() {
       ...formData,
       [e.target.name]: e.target.value
     });
+  };
+
+  const handleGoogleSignUp = async () => {
+    setError('');
+    setIsLoading(true);
+    try {
+      const { error } = await signInWithGoogle();
+      if (error) {
+        setError(error.message || 'Erreur lors de l\'inscription avec Google');
+        setIsLoading(false);
+      }
+    } catch (err) {
+      setError('Erreur lors de l\'inscription avec Google');
+      setIsLoading(false);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -266,6 +281,28 @@ export default function Register() {
                 )}
               </Button>
             </form>
+
+            <div className="mt-6">
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-300" />
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="px-2 bg-white text-gray-500">ou s'inscrire avec</span>
+                </div>
+              </div>
+
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full mt-4"
+                onClick={handleGoogleSignUp}
+                disabled={isLoading}
+              >
+                <Chrome className="w-5 h-5 mr-2" />
+                Google
+              </Button>
+            </div>
 
             <p className="text-center text-sm text-gray-600 mt-6">
               Déjà un compte ?{' '}
