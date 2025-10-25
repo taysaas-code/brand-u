@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { InvokeLLM } from "@/api/integrations";
-import { BrandAsset, UserSession } from "@/api/entities";
+import { BrandAsset, UserSession } from "@/lib/supabaseHelpers";
 import { Bot, Sparkles, Palette, Type, Heart, Brain } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import StepIndicator from "../components/StepIndicator";

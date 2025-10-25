@@ -16,7 +16,7 @@ export default function Login() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   
-  const { login, signInWithGoogle } = useAuth();
+  const { signIn, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -25,19 +25,12 @@ export default function Login() {
     setIsLoading(true);
 
     try {
-      // Simulation d'une authentification
-      if (email && password) {
-        const userData = {
-          id: '1',
-          email: email,
-          name: email.split('@')[0],
-          picture: `https://avatar.vercel.sh/${email}.png`
-        };
-        
-        await login(userData);
-        navigate('/IdentiteVisuelle');
+      const { error } = await signIn(email, password);
+
+      if (error) {
+        setError(error.message || 'Erreur de connexion');
       } else {
-        setError('Veuillez remplir tous les champs');
+        navigate('/IdentiteVisuelle');
       }
     } catch (err) {
       setError('Erreur de connexion. Veuillez réessayer.');
@@ -48,16 +41,15 @@ export default function Login() {
 
   const handleDemoLogin = async () => {
     setIsLoading(true);
+    setError('');
     try {
-      const demoUser = {
-        id: 'demo',
-        email: 'demo@brand-u.com',
-        name: 'Utilisateur Démo',
-        picture: 'https://avatar.vercel.sh/demo.png'
-      };
+      const { error } = await signIn('demo@brand-u.com', 'demo123456');
 
-      await login(demoUser);
-      navigate('/IdentiteVisuelle');
+      if (error) {
+        setError('Compte démo non disponible. Veuillez créer un compte.');
+      } else {
+        navigate('/IdentiteVisuelle');
+      }
     } catch (err) {
       setError('Erreur lors de la connexion démo');
     } finally {

@@ -5,7 +5,7 @@ import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { UploadFile } from "@/api/integrations";
-import { BrandAsset, UserSession, Project } from "@/api/entities";
+import { BrandAsset, UserSession, Project } from "@/lib/supabaseHelpers";
 import { useToast } from "@/components/GlobalToast";
 import StepIndicator from "../components/StepIndicator";
 import FileUploadZone from "../components/FileUploadZone";

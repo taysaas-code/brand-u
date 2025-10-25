@@ -17,7 +17,7 @@ import {
   CheckCircle, // Added from outline
   Circle // Added from outline
 } from "lucide-react";
-import { Project, UserSession, BrandAsset } from "@/api/entities";
+import { Project, UserSession, BrandAsset } from "@/lib/supabaseHelpers";
 import { User } from "@/api/entities";
 import { useAuth } from "@/contexts/AuthContext";
 import { 

@@ -5,7 +5,7 @@ import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { UploadFile } from "@/api/integrations";
-import { BrandAsset, UserSession } from "@/api/entities";
+import { BrandAsset, UserSession } from "@/lib/supabaseHelpers";
 import StepIndicator from "../components/StepIndicator";
 import FileUploadZone from "../components/FileUploadZone";
 

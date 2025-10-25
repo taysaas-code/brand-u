@@ -19,7 +19,7 @@ import {
   Heart,
   ExternalLink
 } from "lucide-react";
-import { Project, UserSession, BrandAsset } from "@/api/entities";
+import { Project, UserSession, BrandAsset } from "@/lib/supabaseHelpers";
 
 export default function ProjetDetail() {
   const navigate = useNavigate();

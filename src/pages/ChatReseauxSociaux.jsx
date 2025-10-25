@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Send, Image as ImageIcon, Sparkles, TrendingUp, Instagram, Facebook, Twitter } from "lucide-react";
 import { InvokeLLM, UploadFile } from "@/api/integrations";
-import { ChatMessage as ChatMessageEntity, UserSession } from "@/api/entities";
+import { ChatMessage as ChatMessageEntity, UserSession } from "@/lib/supabaseHelpers";
 import ChatMessage from "../components/ChatMessage";
 
 export default function ChatReseauxSociaux() {

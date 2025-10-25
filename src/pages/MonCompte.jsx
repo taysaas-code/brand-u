@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useToast } from '@/components/GlobalToast';
-import { Project } from '@/api/entities';
+import { Project } from '@/lib/supabaseHelpers';
 import {
   User as UserIcon,
   Bell,

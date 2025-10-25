@@ -21,7 +21,7 @@ export default function Register() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   
-  const { login, signInWithGoogle } = useAuth();
+  const { signUp, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
 
   const passwordStrength = (password) => {
@@ -96,16 +96,15 @@ export default function Register() {
     setIsLoading(true);
 
     try {
-      // Simulation de création de compte
-      const userData = {
-        id: Date.now().toString(),
-        email: formData.email,
-        name: formData.name,
-        picture: `https://avatar.vercel.sh/${formData.email}.png`
-      };
-      
-      await login(userData);
-      navigate('/IdentiteVisuelle');
+      const { error } = await signUp(formData.email, formData.password, {
+        name: formData.name
+      });
+
+      if (error) {
+        setError(error.message || 'Erreur lors de la création du compte');
+      } else {
+        navigate('/IdentiteVisuelle');
+      }
     } catch (err) {
       setError('Erreur lors de la création du compte. Veuillez réessayer.');
     } finally {
