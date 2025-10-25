@@ -7,11 +7,14 @@ import { Input } from "@/components/ui/input";
 import { uploadFile } from "@/lib/supabaseStorage";
 import { BrandAsset, UserSession, Project } from "@/lib/supabaseHelpers";
 import { useToast } from "@/components/GlobalToast";
+import { useAuth } from "@/contexts/AuthContext";
 import StepIndicator from "../components/StepIndicator";
 import FileUploadZone from "../components/FileUploadZone";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 export default function UploadVisuels() {
   const navigate = useNavigate();
+  const { user, isLoading: authLoading, isAuthenticated } = useAuth();
   const [files, setFiles] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
   const [projectName, setProjectName] = useState("Mon Projet");
@@ -19,6 +22,15 @@ export default function UploadVisuels() {
   const { success, error } = useToast();
 
   useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      error("Vous devez être connecté pour accéder à cette page");
+      navigate("/auth?redirectTo=/UploadVisuels");
+    }
+  }, [authLoading, isAuthenticated, navigate, error]);
+
+  useEffect(() => {
+    if (!isAuthenticated || authLoading) return;
+
     const initializeSession = async () => {
       try {
         await UserSession.create({
@@ -34,7 +46,19 @@ export default function UploadVisuels() {
     };
 
     initializeSession();
-  }, [sessionId]);
+  }, [sessionId, isAuthenticated, authLoading]);
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return null;
+  }
 
   const handleFilesSelected = (selectedFiles) => {
     const validFiles = selectedFiles.filter(file => {
