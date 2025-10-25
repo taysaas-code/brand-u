@@ -19,7 +19,7 @@ export default function AuthCallback() {
 
         if (data.session) {
           // Successful authentication
-          navigate('/identitevisuelle');
+          navigate('/UploadVisuels');
         } else {
           // No session found
           navigate('/auth');
