@@ -85,33 +85,33 @@ function PagesContent() {
     return (
         <Layout currentPageName={currentPage}>
             <Routes>            
-                
+
                     <Route path="/" element={<Accueil />} />
-                
-                
+
+
                 <Route path="/Accueil" element={<Accueil />} />
-                
-                <Route path="/UploadVisuels" element={<UploadVisuels />} />
-                
-                <Route path="/UploadTexte" element={<UploadTexte />} />
-                
-                <Route path="/Analyse" element={<Analyse />} />
-                
-                <Route path="/Chat" element={<Chat />} />
-                
-                <Route path="/Ressources" element={<Ressources />} />
-                
-                <Route path="/IdentiteVisuelle" element={<IdentiteVisuelle />} />
-                
-                <Route path="/ChatReseauxSociaux" element={<ChatReseauxSociaux />} />
-                
-                <Route path="/ChatCreationContenu" element={<ChatCreationContenu />} />
-                
-                <Route path="/ChatWeb" element={<ChatWeb />} />
-                
-                <Route path="/ProjetDetail" element={<ProjetDetail />} />
-                
-                <Route path="/MonCompte" element={<MonCompte />} />
+
+                <Route path="/UploadVisuels" element={<ProtectedRoute><UploadVisuels /></ProtectedRoute>} />
+
+                <Route path="/UploadTexte" element={<ProtectedRoute><UploadTexte /></ProtectedRoute>} />
+
+                <Route path="/Analyse" element={<ProtectedRoute><Analyse /></ProtectedRoute>} />
+
+                <Route path="/Chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
+
+                <Route path="/Ressources" element={<ProtectedRoute><Ressources /></ProtectedRoute>} />
+
+                <Route path="/IdentiteVisuelle" element={<ProtectedRoute><IdentiteVisuelle /></ProtectedRoute>} />
+
+                <Route path="/ChatReseauxSociaux" element={<ProtectedRoute><ChatReseauxSociaux /></ProtectedRoute>} />
+
+                <Route path="/ChatCreationContenu" element={<ProtectedRoute><ChatCreationContenu /></ProtectedRoute>} />
+
+                <Route path="/ChatWeb" element={<ProtectedRoute><ChatWeb /></ProtectedRoute>} />
+
+                <Route path="/ProjetDetail" element={<ProtectedRoute><ProjetDetail /></ProtectedRoute>} />
+
+                <Route path="/MonCompte" element={<ProtectedRoute><MonCompte /></ProtectedRoute>} />
                 
                 <Route path="/auth" element={<Auth />} />
                 

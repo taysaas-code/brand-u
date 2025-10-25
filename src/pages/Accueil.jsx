@@ -18,7 +18,7 @@ export default function Accueil() {
               </div>
               <span className="text-xl font-bold text-gray-900">Brand'U</span>
             </div>
-            <Link to={createPageUrl("UploadVisuels")}>
+            <Link to="/auth">
               <Button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 gap-2">
                 Commencer
                 <ArrowRight className="w-4 h-4" />
@@ -55,7 +55,7 @@ export default function Accueil() {
             Notre IA analyse vos assets existants et vous guide pour produire des créations exceptionnelles.
           </p>
 
-          <Link to={createPageUrl("UploadVisuels")}>
+          <Link to="/auth">
             <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 text-lg gap-3 shadow-lg hover:shadow-xl transition-all duration-300">
               Commencer maintenant
               <ArrowRight className="w-5 h-5" />
@@ -171,7 +171,7 @@ export default function Accueil() {
           <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
             Rejoignez les créateurs qui utilisent déjà l'IA pour produire des visuels exceptionnels
           </p>
-          <Link to={createPageUrl("UploadVisuels")}>
+          <Link to="/auth">
             <Button size="lg" variant="secondary" className="bg-white text-blue-600 hover:bg-gray-50 px-8 py-4 text-lg gap-3 shadow-lg">
               Commencer gratuitement
               <ArrowRight className="w-5 h-5" />

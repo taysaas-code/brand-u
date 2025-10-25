@@ -65,7 +65,7 @@ export default function Auth() {
   // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
-      const redirectTo = searchParams.get('redirectTo') || '/identitevisuelle';
+      const redirectTo = searchParams.get('redirectTo') || '/UploadVisuels';
       navigate(redirectTo, { replace: true });
     }
   }, [isAuthenticated, navigate, searchParams]);
@@ -172,9 +172,9 @@ export default function Auth() {
         name: 'Utilisateur Démo',
         picture: 'https://avatar.vercel.sh/demo.png'
       };
-      
+
       await loginDemo(demoUser);
-      navigate('/identitevisuelle');
+      navigate('/UploadVisuels');
     } catch (err) {
       setMessage({
         type: 'error',
