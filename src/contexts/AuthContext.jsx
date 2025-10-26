@@ -32,15 +32,8 @@ export const AuthProvider = ({ children }) => {
         }
       } catch (error) {
         console.error('Auth initialization error:', error);
-        // Set demo user for development
-        const demoUser = {
-          id: 'demo',
-          email: 'demo@brand-u.com',
-          name: 'Utilisateur Démo',
-          picture: 'https://avatar.vercel.sh/demo.png'
-        };
-        setUser(demoUser);
-        setIsAuthenticated(true);
+        setUser(null);
+        setIsAuthenticated(false);
       }
       
       setIsLoading(false);
