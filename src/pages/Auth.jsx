@@ -62,13 +62,13 @@ export default function Auth() {
     defaultValues: { email: '' }
   });
 
-  // Redirect if already authenticated
+  // Redirect if already authenticated (but not if loading)
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && !isLoading) {
       const redirectTo = searchParams.get('redirectTo') || '/UploadVisuels';
       navigate(redirectTo, { replace: true });
     }
-  }, [isAuthenticated, navigate, searchParams]);
+  }, [isAuthenticated, isLoading, navigate, searchParams]);
 
   // Handle sign in
   const handleSignIn = async (data) => {

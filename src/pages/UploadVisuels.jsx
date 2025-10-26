@@ -51,18 +51,21 @@ export default function UploadVisuels() {
 
   const handleSkip = async () => {
     try {
+      console.log("=== HANDLE SKIP CALLED ===");
+
       if (!projectName.trim()) {
         error("Veuillez saisir un nom de projet");
         return;
       }
 
+      console.log("Tentative de création du projet:", projectName);
       const project = await Project.create({
         name: projectName,
         description: "Projet sans visuels",
         status: "active"
       });
 
-      console.log("Projet créé:", project);
+      console.log("Projet créé avec succès:", project);
 
       const sessions = await UserSession.filter({ session_id: sessionId });
       if (sessions.length > 0) {
@@ -79,7 +82,11 @@ export default function UploadVisuels() {
   };
 
   const handleContinue = async () => {
+    console.log("=== HANDLE CONTINUE CALLED ===");
+    console.log("Nombre de fichiers:", files.length);
+
     if (files.length === 0) {
+      console.log("Aucun fichier, appel de handleSkip");
       handleSkip();
       return;
     }
@@ -91,13 +98,14 @@ export default function UploadVisuels() {
 
     setIsUploading(true);
     try {
+      console.log("Tentative de création du projet:", projectName);
       const project = await Project.create({
         name: projectName,
         description: `Projet avec ${files.length} visuels`,
         status: "active"
       });
 
-      console.log("Projet créé:", project);
+      console.log("Projet créé avec succès:", project);
 
       let uploadedCount = 0;
 
